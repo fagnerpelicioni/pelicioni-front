@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
-import HomePage from './components/HomePage';
+import HomePage from './components/Layout';
 
 const App = () => {
     const isAuthenticated = !!localStorage.getItem('auth-token');

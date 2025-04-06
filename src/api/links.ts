@@ -1,5 +1,4 @@
 export const fetchUserData = async (token: string) => {
-    console.log('Fetching user data with token:', token);
     const response = await fetch('https://pelicioni-auth-api.onrender.com/api/links', {
         method: 'GET',
         headers: {

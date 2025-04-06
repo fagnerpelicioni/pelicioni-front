@@ -14,7 +14,6 @@ const LoginPage = () => {
     setError('');
 
     try {
-        console.log('Logging in with:', { email, password });
       const response = await login(email, password);
       localStorage.setItem('auth-token', response.token);
       await navigate('/home');
