@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { register } from '../api/auth';
+import { TextField, Button, Typography, Box } from '@mui/material';
 
 const RegisterPage = () => {
     const [username, setUsername] = useState('');
@@ -23,32 +24,53 @@ const RegisterPage = () => {
     };
 
     return (
-        <div>
-            <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Username:</label>
-                    <input
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            minHeight="100vh"
+            p={3}
+        >
+            <Typography variant="h4" gutterBottom>
+                Register
+            </Typography>
+            <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '400px' }}>
+                <Box mb={2}>
+                    <TextField
+                        label="Username"
                         type="text"
+                        fullWidth
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
                     />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input
+                </Box>
+                <Box mb={2}>
+                    <TextField
+                        label="Password"
                         type="password"
+                        fullWidth
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                </div>
-                <button type="submit">Register</button>
+                </Box>
+                <Button type="submit" variant="contained" color="primary" fullWidth>
+                    Register
+                </Button>
+                {error && (
+                    <Typography color="error" mt={2}>
+                        {error}
+                    </Typography>
+                )}
+                {success && (
+                    <Typography color="success.main" mt={2}>
+                        {success}
+                    </Typography>
+                )}
             </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-        </div>
+        </Box>
     );
 };
 
