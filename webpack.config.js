@@ -6,8 +6,8 @@ module.exports = {
   entry: './src/index.tsx', // Entry point of your application
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
-    publicPath: '/',
+    filename: '[name].[contenthash].js',
+    publicPath: '', // Use '' for local file access or '/' for deployment
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'], // Resolve these extensions
@@ -40,7 +40,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html', // Use your existing HTML file
+      template: './public/index.html', // Path to your HTML template
+      inject: 'body', // Inject scripts into the body
     }),
   ],
   devServer: {
