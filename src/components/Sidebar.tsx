@@ -17,8 +17,9 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
-import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
+import logo from '../assets/logo_new.png';
 
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../utils';
@@ -117,10 +118,7 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
         onClick={() => closeSidebar()}
       />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <IconButton variant="soft" color="primary" size="sm">
-          <BrightnessAutoRoundedIcon />
-        </IconButton>
-        <Typography level="title-lg">Dashboard</Typography>
+        <img src={logo} alt="Logo" style={{ height: 50 }} />
         <ColorSchemeToggle sx={{ ml: 'auto' }} />
       </Box>
       <Box

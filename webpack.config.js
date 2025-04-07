@@ -36,6 +36,13 @@ module.exports = {
           },
         },
       },
+      {
+        include: /src/,
+        test: /\.(png|jpe?g|gif|svg)$/i, // Handle image files
+        use: [
+          'file-loader',
+        ]
+      },
     ],
   },
   plugins: [

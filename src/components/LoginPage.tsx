@@ -7,18 +7,15 @@ import GlobalStyles from '@mui/joy/GlobalStyles';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
-import Checkbox from '@mui/joy/Checkbox';
-import Divider from '@mui/joy/Divider';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import IconButton, { IconButtonProps } from '@mui/joy/IconButton';
 import Link from '@mui/joy/Link';
 import Input from '@mui/joy/Input';
 import Typography from '@mui/joy/Typography';
 import Stack from '@mui/joy/Stack';
-import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
-import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
-import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded';
+import { Alert } from "@mui/joy";
+
+import logo from '../assets/logo_new.png';
 
 import ColorSchemeToggle from './ColorSchemeToggle';
 
@@ -44,17 +41,24 @@ const customTheme = extendTheme({
 const LoginPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     console.log('handleSubmit', e);
+    setLoading(true);
     setError('');
 
     try {
       const response = await login(e.email, e.password);
       localStorage.setItem('auth-token', response.token);
       await navigate('/home');
-    } catch (err) {
-      setError('Login failed. Please check your credentials.');
+    } catch (err: any) {
+      if (err.response) {
+        setError(err.response.data.error);
+      } else {
+        setError('Erro desconhecido. Tente novamente mais tarde.');
+      }
+      setLoading(false);
     }
   };
 
@@ -96,13 +100,10 @@ const LoginPage = () => {
       >
         <Box
           component="header"
-          sx={{ py: 3, display: 'flex', justifyContent: 'space-between' }}
+          sx={{ py: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
         >
           <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-            <IconButton variant="soft" color="primary" size="sm">
-              <BadgeRoundedIcon />
-            </IconButton>
-            <Typography level="title-lg">Nome da empresa</Typography>
+            <img src={logo} alt="Logo" style={{ height: 75 }} />
           </Box>
           <ColorSchemeToggle />
         </Box>
@@ -137,6 +138,11 @@ const LoginPage = () => {
             </Stack>
           </Stack>
           <Stack sx={{ gap: 4, mt: 2 }}>
+            {error && ( // Display error message
+              <Alert variant="solid" color="danger">
+                  {error}
+              </Alert>
+            )}
             <form
               onSubmit={(event: React.FormEvent<SignInFormElement>) => {
                 event.preventDefault();
@@ -168,7 +174,7 @@ const LoginPage = () => {
                     Esqueceu a senha?
                   </Link>
                 </Box>
-                <Button type="submit" fullWidth onSubmit={handleSubmit}>
+                <Button type="submit" fullWidth onSubmit={handleSubmit} loading={loading}>
                   Entrar
                 </Button>
               </Stack>
@@ -177,7 +183,7 @@ const LoginPage = () => {
         </Box>
         <Box component="footer" sx={{ py: 3 }}>
           <Typography level="body-xs" sx={{ textAlign: 'center' }}>
-            © Nome da empresa {new Date().getFullYear()}
+            © Soluções Inteligentes {new Date().getFullYear()}
           </Typography>
         </Box>
       </Box>
