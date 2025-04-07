@@ -221,20 +221,46 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
             </ListItemButton>
           </ListItem>
           {userData.role === 'admin' && (
-            <div>
-            <ListItem>
-                <ListItemButton onClick={() => onItemClick({ name: 'Users'})}>
-                    <GroupRoundedIcon />
-                    Usuários
-                </ListItemButton>
+          <ListItem>
+            <ListItemButton onClick={() => onItemClick({ name: 'Users' })}>
+              <GroupRoundedIcon />
+              Usuários
+            </ListItemButton>
+          </ListItem>
+          )}
+          {userData.role === 'admin' && (
+            <ListItem nested>
+              <Toggler
+                renderToggle={({ open, setOpen }) => (
+                  <ListItemButton onClick={() => setOpen(!open)}>
+                    <SettingsRoundedIcon />
+                    <ListItemContent>
+                      <Typography level="title-sm">Configurações</Typography>
+                    </ListItemContent>
+                    <KeyboardArrowDownIcon
+                      sx={[
+                        open
+                          ? {
+                              transform: 'rotate(180deg)',
+                            }
+                          : {
+                              transform: 'none',
+                            },
+                      ]}
+                    />
+                  </ListItemButton>
+                )}
+              >
+                <List sx={{ gap: 0.5 }}>
+                  <ListItem sx={{ mt: 0.5 }}>
+                    <ListItemButton onClick={() => onItemClick({ name: 'Create User' })}>Criar usuários</ListItemButton>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemButton onClick={() => onItemClick({ name: 'Create Link' })}>Criar link</ListItemButton>
+                  </ListItem>
+                </List>
+              </Toggler>
             </ListItem>
-            <ListItem>
-                <ListItemButton onClick={() => onItemClick({ name: 'Settings'})}>
-                <SettingsRoundedIcon />
-                Configurações
-                </ListItemButton>
-            </ListItem>
-            </div>
           )}
         </List>
       </Box>

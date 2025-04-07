@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchUserData } from '../api/links';
+import { getLinks } from '../api/links';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Box, CircularProgress } from '@mui/material';
 import { CssVarsProvider } from '@mui/joy/styles';
@@ -9,6 +9,8 @@ import Header from './Header';
 import LinkContent from './LinkContent';
 import Home from './Home';
 import Users from './Users';
+import CreateUser from './CreateUser';
+import CreateLink from './CreateLink';
 
 interface Link {
     name: string;
@@ -25,13 +27,15 @@ const HomePage = () => {
     useEffect(() => {
         const token = localStorage.getItem('auth-token');
         if (token) {
-            fetchUserData(token)
-                .then(data => {
-                    setUserData(data);
+            getLinks(token)
+                .then(response => {
+                    setUserData(response.data);
                     setLoading(false);
                 })
                 .catch(err => {
-                    setError('Error fetching user data.');
+                    console.log(err);
+                    localStorage.removeItem('auth-token');
+                    window.location.href = '/login'; // Redirect to login page
                     setLoading(false);
                 });
         } else {
@@ -85,6 +89,10 @@ const HomePage = () => {
                 return <Home />;
             case 'Users':
                 return <Users />;
+            case 'Create User':
+                return <CreateUser />;
+            case 'Create Link':
+                return <CreateLink />;
             default:
                 return selectedItem ? <LinkContent item={selectedItem} /> : null;
         }
