@@ -35,7 +35,7 @@ const HomePage = () => {
                 .catch(err => {
                     console.log(err);
                     localStorage.removeItem('auth-token');
-                    window.location.href = '/login'; // Redirect to login page
+                    navigate('/login');
                     setLoading(false);
                 });
         } else {
@@ -72,7 +72,7 @@ const HomePage = () => {
     }
 
     if (!userData) {
-        navigate('/login');
+        navigate('/');
         return null;
     }
 

@@ -12,7 +12,6 @@ import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
-import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
@@ -160,45 +159,6 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
               </ListItemButton>
             </ListItem>
           ))}
-
-          <ListItem nested>
-            <Toggler
-              renderToggle={({ open, setOpen }) => (
-                <ListItemButton onClick={() => setOpen(!open)}>
-                  <AssignmentRoundedIcon />
-                  <ListItemContent>
-                    <Typography level="title-sm">Exemplo sublinks</Typography>
-                  </ListItemContent>
-                  <KeyboardArrowDownIcon
-                    sx={[
-                      open
-                        ? {
-                            transform: 'rotate(180deg)',
-                          }
-                        : {
-                            transform: 'none',
-                          },
-                    ]}
-                  />
-                </ListItemButton>
-              )}
-            >
-              <List sx={{ gap: 0.5 }}>
-                <ListItem sx={{ mt: 0.5 }}>
-                  <ListItemButton>Link 1</ListItemButton>
-                </ListItem>
-                <ListItem>
-                  <ListItemButton>Link 2</ListItemButton>
-                </ListItem>
-                <ListItem>
-                  <ListItemButton>Link 3</ListItemButton>
-                </ListItem>
-                <ListItem>
-                  <ListItemButton>Link 4</ListItemButton>
-                </ListItem>
-              </List>
-            </Toggler>
-          </ListItem>
         </List>
         <List
           size="sm"

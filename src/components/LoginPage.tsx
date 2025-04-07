@@ -17,16 +17,9 @@ import { Alert } from "@mui/joy";
 
 import logo from '../assets/logo_new.png';
 
-import ColorSchemeToggle from './ColorSchemeToggle';
+import { User, LoginFormElement } from '../Interfaces';
 
-interface FormElements extends HTMLFormControlsCollection {
-    email: HTMLInputElement;
-    password: HTMLInputElement;
-    persistent: HTMLInputElement;
-}
-interface SignInFormElement extends HTMLFormElement {
-readonly elements: FormElements;
-}
+import ColorSchemeToggle from './ColorSchemeToggle';
 
 const customTheme = extendTheme({
     colorSchemes: {
@@ -43,7 +36,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: User) => {
     console.log('handleSubmit', e);
     setLoading(true);
     setError('');
@@ -144,14 +137,14 @@ const LoginPage = () => {
               </Alert>
             )}
             <form
-              onSubmit={(event: React.FormEvent<SignInFormElement>) => {
+              onSubmit={async(event: React.FormEvent<LoginFormElement>) => {
                 event.preventDefault();
                 const formElements = event.currentTarget.elements;
                 const data = {
                   email: formElements.email.value,
                   password: formElements.password.value,
                 };
-                handleSubmit(data);
+                await handleSubmit(data);
               }}
             >
               <FormControl required>
@@ -174,7 +167,7 @@ const LoginPage = () => {
                     Esqueceu a senha?
                   </Link>
                 </Box>
-                <Button type="submit" fullWidth onSubmit={handleSubmit} loading={loading}>
+                <Button type="submit" fullWidth loading={loading}>
                   Entrar
                 </Button>
               </Stack>

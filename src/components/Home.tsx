@@ -8,7 +8,7 @@ const Home = () => {
             alignItems="center"
             minHeight="100vh"
         >
-            <Typography variant="h4">Welcome to the Home Page!</Typography>
+            <Typography variant="h4">Bem vindo a dashboard!</Typography>
         </Box>
     )
 }
