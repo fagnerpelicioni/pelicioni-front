@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[contenthash].js',
-    publicPath: '', // Use '' for local file access or '/' for deployment
+    publicPath: '/', // Use '' for local file access or '/' for deployment
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'], // Resolve these extensions
