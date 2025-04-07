@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getUsers } from '../api/users';
+import { UserLink } from '../Interfaces'; // Adjust the import path as necessary
 
 import {
   Box,
@@ -14,7 +15,7 @@ import {
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
-const Users = () => {
+const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usersData, setUserData] = useState<{ _id: string; name: string; email: string; avatar: string }[] | null>(null);
@@ -146,14 +147,13 @@ const Users = () => {
           </Box>
         )): ( <Typography>Sem usuários cadastrados</Typography>)} 
 
-        {/* Add New User Button */}
         <Button
           variant="solid"
           color="primary"
           sx={{ mt: 2 }}
-          onClick={() => console.log('Add new user')}
+          onClick={() => onItemClick({ name: "Users", link: '/' })}
         >
-          Add New User
+          Criar novo usuário
         </Button>
       </Sheet>
     </Box>

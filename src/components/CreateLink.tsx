@@ -9,24 +9,10 @@ import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
-import Typography from '@mui/joy/Typography';
 import Stack from '@mui/joy/Stack';
 import { Alert } from "@mui/joy";
 
-interface FormElements extends HTMLFormControlsCollection {
-    name: HTMLInputElement;
-    userEmail: HTMLInputElement;
-    link: HTMLInputElement;
-}
-interface SignInFormElement extends HTMLFormElement {
-readonly elements: FormElements;
-}
-
-interface UserLink {
-    name: string;
-    userEmail: string;
-    link: string;
-}
+import { UserLink, LinkFormElement } from '../Interfaces';
 
 const CreateUser = () => {
     const [error, setError] = useState<string | null>(null);
@@ -45,7 +31,6 @@ const CreateUser = () => {
         }
         try {
             const response = await createLink(token, event);
-            console.log('Link created successfully:', response);
             setSuccessMessage('Link criado com sucesso!'); // Set success message
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
@@ -124,9 +109,9 @@ const CreateUser = () => {
                                 </Alert>
                             )}
                             <form
-                                onSubmit={async (event: React.FormEvent<SignInFormElement>) => {
+                                onSubmit={async (event: React.FormEvent<LinkFormElement>) => {
                                     event.preventDefault();
-                                    const form = event.currentTarget as SignInFormElement;
+                                    const form = event.currentTarget as LinkFormElement;
                                     const formElements = event.currentTarget.elements;
                                     const userData: UserLink = {
                                         name: formElements.name.value,

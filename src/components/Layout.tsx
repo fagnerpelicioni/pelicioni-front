@@ -88,7 +88,7 @@ const HomePage = () => {
             case 'Home':
                 return <Home />;
             case 'Users':
-                return <Users />;
+                return <Users onItemClick={handleSidebarClick} />;
             case 'Create User':
                 return <CreateUser />;
             case 'Create Link':

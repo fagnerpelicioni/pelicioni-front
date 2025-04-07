@@ -22,10 +22,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../utils';
-interface UserData {
-    links: { name: string, link: string }[];
-    // Add other properties of userData if needed
-}
+import { UserLink } from '../Interfaces'; // Adjust the import path as necessary
+
 const Toggler = ({
   defaultExpanded = false,
   renderToggle,
@@ -65,7 +63,7 @@ const handleLogout = () => {
     window.location.href = '/login'; // Redirect to login page
 }
 
-const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item: any) => void }) => {
+const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item: UserLink) => void }) => {
   return (
     <Sheet
       className="Sidebar"
@@ -146,7 +144,7 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
           }}
         >
           <ListItem>
-            <ListItemButton onClick={() => onItemClick({ name: 'Home'})}>
+            <ListItemButton onClick={() => onItemClick({ name: 'Home', link: '/' })}>
               <HomeRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Home</Typography>
@@ -222,7 +220,7 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
           </ListItem>
           {userData.role === 'admin' && (
           <ListItem>
-            <ListItemButton onClick={() => onItemClick({ name: 'Users' })}>
+            <ListItemButton onClick={() => onItemClick({ name: 'Users', link: '/' })}>
               <GroupRoundedIcon />
               Usuários
             </ListItemButton>
@@ -253,10 +251,10 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
               >
                 <List sx={{ gap: 0.5 }}>
                   <ListItem sx={{ mt: 0.5 }}>
-                    <ListItemButton onClick={() => onItemClick({ name: 'Create User' })}>Criar usuários</ListItemButton>
+                    <ListItemButton onClick={() => onItemClick({ name: 'Create User', link: '/' })}>Criar usuários</ListItemButton>
                   </ListItem>
                   <ListItem>
-                    <ListItemButton onClick={() => onItemClick({ name: 'Create Link' })}>Criar link</ListItemButton>
+                    <ListItemButton onClick={() => onItemClick({ name: 'Create Link', link: '/' })}>Criar link</ListItemButton>
                   </ListItem>
                 </List>
               </Toggler>

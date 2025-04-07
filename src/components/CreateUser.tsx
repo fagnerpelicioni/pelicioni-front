@@ -9,24 +9,10 @@ import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
-import Typography from '@mui/joy/Typography';
 import Stack from '@mui/joy/Stack';
 import { Alert } from "@mui/joy";
 
-interface FormElements extends HTMLFormControlsCollection {
-    name: HTMLInputElement;
-    email: HTMLInputElement;
-    password: HTMLInputElement;
-}
-interface SignInFormElement extends HTMLFormElement {
-readonly elements: FormElements;
-}
-
-interface UserData {
-    name: string;
-    email: string;
-    password: string;
-}
+import { UserData, CreateUserFormElement } from '../Interfaces';
 
 const CreateUser = () => {
     const [error, setError] = useState<string | null>(null);
@@ -119,9 +105,9 @@ const CreateUser = () => {
                                 </Alert>
                             )}
                             <form
-                                onSubmit={async (event: React.FormEvent<SignInFormElement>) => {
+                                onSubmit={async (event: React.FormEvent<CreateUserFormElement>) => {
                                     event.preventDefault();
-                                    const form = event.currentTarget as SignInFormElement;
+                                    const form = event.currentTarget as CreateUserFormElement;
                                     const formElements = event.currentTarget.elements;
                                     const userData: UserData = {
                                         name: formElements.name.value,
@@ -133,12 +119,12 @@ const CreateUser = () => {
                                 }}
                             >
                                 <FormControl required>
-                                    <FormLabel>Email</FormLabel>
-                                    <Input type="email" name="email" />
-                                </FormControl>
-                                <FormControl required>
                                     <FormLabel>Nome</FormLabel>
                                     <Input type="text" name="name" />
+                                </FormControl>
+                                <FormControl required>
+                                    <FormLabel>Email</FormLabel>
+                                    <Input type="email" name="email" />
                                 </FormControl>
                                 <FormControl required>
                                     <FormLabel>Senha</FormLabel>

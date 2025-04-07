@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { register } from '../api/auth';
 
 
-import { CssVarsProvider, extendTheme, useColorScheme } from '@mui/joy/styles';
+import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 import GlobalStyles from '@mui/joy/GlobalStyles';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
-import Checkbox from '@mui/joy/Checkbox';
-import Divider from '@mui/joy/Divider';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import IconButton, { IconButtonProps } from '@mui/joy/IconButton';
@@ -16,26 +14,13 @@ import Link from '@mui/joy/Link';
 import Input from '@mui/joy/Input';
 import Typography from '@mui/joy/Typography';
 import Stack from '@mui/joy/Stack';
-import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
-import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
 import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded';
+import { Alert } from "@mui/joy";
+
 
 import ColorSchemeToggle from './ColorSchemeToggle';
 
-interface FormElements extends HTMLFormControlsCollection {
-    email: HTMLInputElement;
-    password: HTMLInputElement;
-    name: HTMLInputElement;
-}
-interface SignInFormElement extends HTMLFormElement {
-readonly elements: FormElements;
-}
-
-interface UserData {
-  name: string;
-  email: string;
-  password: string;
-}
+import { UserData, CreateUserFormElement } from '../Interfaces';
 
 const customTheme = extendTheme({
     colorSchemes: {
@@ -47,22 +32,26 @@ const customTheme = extendTheme({
     },
 });
 
-
 const RegisterPage = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: UserData) => {
+        setLoading(true);
         setError('');
         setSuccess('');
 
         try {
             const response = await register({ name: e.name, password: e.password, email: e.email });
             if (response) {
-                setSuccess('Registration successful! You can now log in.');
+                setSuccess('Cadastro realizado com sucesso, por favor, faça login.');
             }
         } catch (err) {
-            setError('Registration failed. Please try again.');
+            console.error('Error creating user:', err);
+            setError('Ocorreu um erro ao cadastrar o usuário.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -145,16 +134,28 @@ const RegisterPage = () => {
                 </Stack>
               </Stack>
               <Stack sx={{ gap: 4, mt: 2 }}>
+                {success && ( // Display success message
+                    <Alert variant="solid" color="success">
+                        {success}
+                    </Alert>
+                )}
+                {error && ( // Display error message
+                    <Alert variant="solid" color="danger">
+                        {error}
+                    </Alert>
+                )}
                 <form
-                  onSubmit={(event: React.FormEvent<SignInFormElement>) => {
+                  onSubmit={async(event: React.FormEvent<CreateUserFormElement>) => {
                     event.preventDefault();
+                    const form = event.currentTarget as CreateUserFormElement;
                     const formElements = event.currentTarget.elements;
                     const data = {
                       email: formElements.email.value,
                       password: formElements.password.value,
                       name: formElements.name.value,
                     };
-                    alert(JSON.stringify(data, null, 2));
+                    await handleSubmit(data);
+                    form.reset(); // Reset the form after submission
                   }}
                 >
                   <FormControl required>
@@ -177,13 +178,12 @@ const RegisterPage = () => {
                         alignItems: 'center',
                       }}
                     >
-                      <Checkbox size="sm" label="Remember me" name="persistent" />
-                      <Link level="title-sm" href="#replace-with-a-link">
-                        Forgot your password?
+                      <Link level="title-sm" href="/login">
+                        Fazer login
                       </Link>
                     </Box>
-                    <Button type="submit" fullWidth>
-                      Sign in
+                    <Button type="submit" fullWidth loading={loading}>
+                      Cadastrar
                     </Button>
                   </Stack>
                 </form>
@@ -191,7 +191,7 @@ const RegisterPage = () => {
             </Box>
             <Box component="footer" sx={{ py: 3 }}>
               <Typography level="body-xs" sx={{ textAlign: 'center' }}>
-                © Your company {new Date().getFullYear()}
+                © Nome da empresa {new Date().getFullYear()}
               </Typography>
             </Box>
           </Box>
