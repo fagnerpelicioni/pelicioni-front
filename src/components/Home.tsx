@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material"
+import logo from "../assets/logo_new.png"
 
 const Home = () => {
     return (
@@ -8,7 +9,16 @@ const Home = () => {
             alignItems="center"
             minHeight="100vh"
         >
-            <Typography variant="h4">Bem vindo a dashboard!</Typography>
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center" 
+                >
+                    <img src={logo} alt="Logo" />
+                    <Typography variant="h4">Bem vindo a dashboard!</Typography>
+                </Box>
         </Box>
     )
 }
