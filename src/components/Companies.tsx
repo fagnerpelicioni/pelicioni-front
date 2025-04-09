@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getCompanies } from '../api/company';
+import { getCompanies, putCompany } from '../api/company';
 import { UserLink } from '../Interfaces'; // Adjust the import path as necessary
 
 import {
@@ -39,12 +39,10 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
 
   useEffect(() => {
     const token = localStorage.getItem('auth-token');
-    if (!token) {
-        setError('Não autorizado.');
-        setLoading(false);
-        return;
+
+    if (token) {
+      getCompaniesData(token);
     }
-    getCompaniesData(token);
     }, []);
 
     if (loading) {
@@ -75,14 +73,37 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
         );
     }
 
-  // Handlers for edit and delete actions
-  const handleEdit = (id: string) => {
-    console.log(`Edit user with ID: ${id}`);
-  };
+  const editCompany = async(id: string, flag: boolean) => {
+    setLoading(true);
+    setError(null);
 
-  const handleDelete = (id: string) => {
-    console.log(`Delete user with ID: ${id}`);
-  };
+    const token = localStorage.getItem('auth-token');
+
+    if (token) {
+      await putCompany(token, id, { active: !flag })
+        .then(() => {
+          setCompaniesData((prevCompanies) =>
+            prevCompanies.map((company) =>
+              company._id === id ? { ...company, active: !flag } : company
+            )
+          );
+        })
+        .catch((err: any) => {
+          if (err.response) {
+              setError(err.response.data.error);
+            } else {
+              setError('Erro desconhecido. Tente novamente mais tarde.');
+            }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }
+
+  const activeCompany = async(id: string, flag: boolean) => {
+    await editCompany(id, flag )
+  }
 
   return (
     <Box sx={{ p: 3 }}>
@@ -133,7 +154,7 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
             <Typography sx={{ width: "30%"}}>{company.name}</Typography>
             <Typography sx={{ width: "20%"}}>{company.code}</Typography>
             <Stack sx={{ flex: 1}}>
-                <Switch variant="outlined" checked={company.active} />
+                <Switch variant="soft" checked={company.active} onChange={() => activeCompany(company._id, company.active ? company.active : false)}/>
             </Stack>
           </Box>
         )): ( <Typography>Sem empresas cadastradas</Typography>)} 

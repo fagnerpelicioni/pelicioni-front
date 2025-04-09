@@ -12,3 +12,15 @@ export const getUsers = async (token: string) => {
     });
     return response;
 };
+
+export const putUser = async (token: string, id: string, data: any) => {
+    const response = await axios(`${API_URL}/users/${id}`, {
+        method: 'PUT',
+        headers: {
+            'auth-token': token,
+            'Content-Type': 'application/json'
+        },
+        data: data
+    });
+    return response;
+};

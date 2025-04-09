@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import GlobalStyles from '@mui/joy/GlobalStyles';
 import Avatar from '@mui/joy/Avatar';
 import Box from '@mui/joy/Box';
@@ -37,7 +37,7 @@ const Toggler = ({
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   }) => React.ReactNode;
 }) => {
-  const [open, setOpen] = React.useState(defaultExpanded);
+  const [open, setOpen] = useState(defaultExpanded);
   return (
     <React.Fragment>
       {renderToggle({ open, setOpen })}
@@ -59,12 +59,12 @@ const Toggler = ({
   );
 }
 
-const handleLogout = () => {
+const Sidebar = ({ userData, onItemClick }: { userData: UserData; onItemClick: (item: UserLink) => void }) => {
+  const handleLogout = () => {
     localStorage.removeItem('auth-token');
     window.location.href = '/login'; // Redirect to login page
-}
+  }
 
-const Sidebar = ({ userData, onItemClick }: { userData: UserData; onItemClick: (item: UserLink) => void }) => {
   return (
     <Sheet
       className="Sidebar"

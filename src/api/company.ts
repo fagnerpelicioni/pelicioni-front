@@ -25,7 +25,7 @@ export const getCompanies = async (token: string) => {
     return response;
 };
 
-export const editCompany = async (token: string, id: string, data: any) => {
+export const putCompany = async (token: string, id: string, data: any) => {
     const response = await axios(`${API_URL}/${id}`, {
         method: 'PUT',
         headers: {

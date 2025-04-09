@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { getUsers } from '../api/users';
+import { useEffect, useState } from 'react';
+import { getUsers, putUser } from '../api/users';
 import { UserLink } from '../Interfaces'; // Adjust the import path as necessary
 
 import {
@@ -7,18 +7,17 @@ import {
   Typography,
   Sheet,
   Button,
-  Avatar,
-  IconButton,
   Stack,
   CircularProgress,
+  Switch,
 } from '@mui/joy';
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import { UserData } from '../Interfaces';
 
 const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [usersData, setUserData] = useState<{ _id: string; name: string; email: string; company: { name: string } }[] | null>(null);
+  const [usersData, setUserData] = useState<UserData[] | null>(null);
+  const token = localStorage.getItem('auth-token');
 
   const getUsersData = async (token: string) => {
     await getUsers(token)
@@ -34,7 +33,6 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('auth-token');
     if (token) {
       getUsersData(token);
     }
@@ -68,13 +66,37 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
         );
     }
 
-  // Handlers for edit and delete actions
-  const handleEdit = (id: string) => {
-    console.log(`Edit user with ID: ${id}`);
+  const editUser = async(id: string, flag: boolean) => {
+    setLoading(true);
+    setError(null);
+
+    if (token) {
+      await putUser(token, id, { active: !flag })
+        .then(() => {
+          setUserData((prevUsers) =>
+            prevUsers
+              ? prevUsers.map((user) =>
+                  user._id === id ? { ...user, active: !flag } : user
+                )
+              : null
+          );
+        })
+        .catch((err) => {
+          if (err.response) {
+            setError(err.response.data.error);
+          } else {
+            setError('Erro desconhecido. Tente novamente mais tarde.');
+          }
+        }).finally(() => {
+          setLoading(false);
+    });
+    }
   };
 
-  const handleDelete = (id: string) => {
-    console.log(`Delete user with ID: ${id}`);
+  // Handlers for edit and delete actions
+  const activeUser = async(id: string, flag: boolean) => {
+    console.log(`Edit user with ID: ${id}`);
+    await editUser(id, flag);
   };
 
   return (
@@ -108,7 +130,7 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
           <Typography>Nome</Typography>
           <Typography>Email</Typography>
           <Typography>Empresa</Typography>
-          <Typography>Acoes</Typography>
+          <Typography>Ativo</Typography>
         </Box>
 
         {/* User Items */}
@@ -127,23 +149,8 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
             <Typography>{user._id}</Typography>
             <Typography>{user.name}</Typography>
             <Typography>{user.email}</Typography>
-            <Typography>{"-"}</Typography>
-            <Stack direction="row" spacing={1}>
-              <IconButton
-                variant="soft"
-                color="primary"
-                onClick={() => handleEdit(user._id)}
-              >
-                <EditRoundedIcon />
-              </IconButton>
-              <IconButton
-                variant="soft"
-                color="danger"
-                onClick={() => handleDelete(user._id)}
-              >
-                <DeleteRoundedIcon />
-              </IconButton>
-            </Stack>
+            <Typography>{user.company?.name}</Typography>
+            <Switch variant="soft" checked={user.active} onChange={() => activeUser(user._id, user.active ? user.active : false)} />
           </Box>
         )): ( <Typography>Sem usuários cadastrados</Typography>)} 
 

@@ -36,6 +36,7 @@ export interface UserData {
     company?: Company
     role?: string;
     links?: UserLink[];
+    active?: boolean;
 }
 
 export interface SignInElements extends HTMLFormControlsCollection {

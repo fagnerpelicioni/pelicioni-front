@@ -22,9 +22,9 @@ const HomePage = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedItem, setSelectedItem] = useState<UserLink | null>(null);
     const navigate = useNavigate();
+    const token = localStorage.getItem('auth-token');
 
     useEffect(() => {
-        const token = localStorage.getItem('auth-token');
         if (token) {
             getLinks(token)
                 .then(response => {
@@ -40,8 +40,9 @@ const HomePage = () => {
                 });
         } else {
             setLoading(false);
+            navigate('/login');
         }
-    }, []);
+    }, [navigate]);
 
     if (loading) {
         return (
@@ -81,6 +82,10 @@ const HomePage = () => {
     };
 
     const renderContent = () => {
+        if (!token) {
+            navigate('/login');
+            return null;
+        }
         if (!selectedItem) {    
             return <Home />;
         }
