@@ -1,11 +1,8 @@
 import { Typography } from "@mui/material";
 
-interface Link {
-    name: string;
-    link: string;
-};
+import { UserLink } from "../Interfaces";
 
-const LinkContent = ({item} : {item: Link}) => {
+const LinkContent = ({item} : {item: UserLink}) => {
   return (
     <div style={{ height: "100%" }}>
       <Typography variant="h4" style={{ margin: "1rem" }}>{item.name}</Typography>

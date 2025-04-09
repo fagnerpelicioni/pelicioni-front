@@ -17,12 +17,13 @@ import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Business } from '@mui/icons-material';
 
 import logo from '../assets/logo_new.png';
 
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../utils';
-import { UserLink } from '../Interfaces'; // Adjust the import path as necessary
+import { UserLink, UserData } from '../Interfaces'; // Adjust the import path as necessary
 
 const Toggler = ({
   defaultExpanded = false,
@@ -63,7 +64,7 @@ const handleLogout = () => {
     window.location.href = '/login'; // Redirect to login page
 }
 
-const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item: UserLink) => void }) => {
+const Sidebar = ({ userData, onItemClick }: { userData: UserData; onItemClick: (item: UserLink) => void }) => {
   return (
     <Sheet
       className="Sidebar"
@@ -149,7 +150,7 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
             </ListItemButton>
           </ListItem>
 
-          {userData.links.map((link: any, index: number) => (
+          {(userData.links ?? []).map((link: UserLink, index: number) => (
             <ListItem key={index}>
               <ListItemButton onClick={() => onItemClick(link)}>
                 <DashboardRoundedIcon />
@@ -177,12 +178,20 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
             </ListItemButton>
           </ListItem>
           {userData.role === 'admin' && (
-          <ListItem>
-            <ListItemButton onClick={() => onItemClick({ name: 'Users', link: '/' })}>
-              <GroupRoundedIcon />
-              Usuários
-            </ListItemButton>
-          </ListItem>
+          <div>
+            <ListItem>
+              <ListItemButton onClick={() => onItemClick({ name: 'Companies', link: '/' })}>
+                <Business />
+                Empresas
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton onClick={() => onItemClick({ name: 'Users', link: '/' })}>
+                <GroupRoundedIcon />
+                Usuários
+              </ListItemButton>
+            </ListItem>
+          </div>
           )}
           {userData.role === 'admin' && (
             <ListItem nested>
@@ -212,6 +221,9 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
                     <ListItemButton onClick={() => onItemClick({ name: 'Create User', link: '/' })}>Criar usuários</ListItemButton>
                   </ListItem>
                   <ListItem>
+                    <ListItemButton onClick={() => onItemClick({ name: 'Create Company', link: '/' })}>Criar empresa</ListItemButton>
+                  </ListItem>
+                  <ListItem>
                     <ListItemButton onClick={() => onItemClick({ name: 'Create Link', link: '/' })}>Criar link</ListItemButton>
                   </ListItem>
                 </List>
@@ -227,8 +239,13 @@ const Sidebar = ({ userData, onItemClick }: { userData: any; onItemClick: (item:
           size="sm"
         />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">{userData.name}</Typography>
-          <Typography level="body-xs">{userData.email}</Typography>
+          <Typography level="title-sm" sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>{userData.name}</Typography>
+          {userData.company && (
+            <Typography level="body-xs" sx={{ mb: 0.5, overflow: "hidden", textOverflow: "ellipsis" }} noWrap>
+              {userData.company.name}
+            </Typography>
+          )}
+          <Typography level="body-xs" sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>{userData.email}</Typography>
         </Box>
         <IconButton size="sm" variant="plain" color="neutral" onClick={() => handleLogout()}>
           <LogoutRoundedIcon />

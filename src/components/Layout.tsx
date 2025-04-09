@@ -9,19 +9,18 @@ import Header from './Header';
 import LinkContent from './LinkContent';
 import Home from './Home';
 import Users from './Users';
+import Companies from './Companies';
 import CreateUser from './CreateUser';
 import CreateLink from './CreateLink';
+import CreateCompany from './CreateCompany';
 
-interface Link {
-    name: string;
-    link: string;
-};
+import { UserData, UserLink } from '../Interfaces';
 
 const HomePage = () => {
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState<UserData>({} as UserData);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [selectedItem, setSelectedItem] = useState<Link | null>(null);
+    const [selectedItem, setSelectedItem] = useState<UserLink | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,6 +28,7 @@ const HomePage = () => {
         if (token) {
             getLinks(token)
                 .then(response => {
+                    console.log(response.data);
                     setUserData(response.data);
                     setLoading(false);
                 })
@@ -89,10 +89,14 @@ const HomePage = () => {
                 return <Home />;
             case 'Users':
                 return <Users onItemClick={handleSidebarClick} />;
+            case 'Companies':
+                return <Companies onItemClick={handleSidebarClick} />;
             case 'Create User':
                 return <CreateUser />;
             case 'Create Link':
                 return <CreateLink />;
+            case 'Create Company':
+                return <CreateCompany />;
             default:
                 return selectedItem ? <LinkContent item={selectedItem} /> : null;
         }

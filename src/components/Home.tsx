@@ -16,8 +16,7 @@ const Home = () => {
                 alignItems="center"
                 textAlign="center" 
                 >
-                    <img src={logo} alt="Logo" />
-                    <Typography variant="h4">Bem vindo a dashboard!</Typography>
+                    <img src={logo} alt="Logo" style={{ height: "100px" }} />
                 </Box>
         </Box>
     )

@@ -20,7 +20,7 @@ import { Alert } from "@mui/joy";
 
 import ColorSchemeToggle from './ColorSchemeToggle';
 
-import { UserData, CreateUserFormElement } from '../Interfaces';
+import { NewUser, CreateUserFormElement } from '../Interfaces';
 
 const customTheme = extendTheme({
     colorSchemes: {
@@ -37,7 +37,7 @@ const RegisterPage = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e: UserData) => {
+    const handleSubmit = async (e: NewUser) => {
         setLoading(true);
         setError('');
         setSuccess('');

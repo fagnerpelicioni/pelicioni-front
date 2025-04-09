@@ -1,81 +1,51 @@
-import { useState, useEffect } from "react";
-import { register } from "../api/auth";
-import { getCompanies } from "../api/company";
+import { useState } from "react";
 
 import { CssVarsProvider } from '@mui/joy/styles';
-import GlobalStyles from '@mui/joy/GlobalStyles';
-import CssBaseline from '@mui/joy/CssBaseline';
-import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import FormControl from '@mui/joy/FormControl';
-import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
-import Stack from '@mui/joy/Stack';
-import { Alert, CircularProgress, Select, Option } from "@mui/joy";
+import { Alert, Stack, Input, FormLabel, FormControl, Button, Box, CssBaseline, GlobalStyles } from "@mui/joy";
 
-import { UserData, NewUser, CreateUserFormElement } from '../Interfaces';
-import { Form } from "react-router-dom";
+import { createCompany } from "../api/company";
+import { NewCompany } from "../Interfaces";
 
-const CreateUser = () => {
+export interface FormElements extends HTMLFormControlsCollection {
+    name: HTMLInputElement;
+    cnpj: HTMLInputElement;
+    code: HTMLInputElement;
+}
+export interface CompanyFormElement extends HTMLFormElement {
+readonly elements: FormElements;
+}
+
+const CreateCompany = () => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null); // New state for success message
-    const [companies, setCompanies] = useState<any[]>([]); // Adjust type as necessary
-    const [loadingCompanies, setLoadingCompanies] = useState(true);
-    const [selectedCompany, setSelectedCompany] = useState(""); // Add state for the selected company
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const handleSubmit = async (event: NewUser) => {
+    const handleSubmit = async (event: NewCompany) => {
         setLoading(true);
         setError(null);
         setSuccessMessage(null); // Clear success message before submission
 
+        const token = localStorage.getItem('auth-token');
+        if (!token) {
+            setError('Não autorizado.');
+            setLoading(false);
+            return;
+        }
+
         try {
-            const response = await register(event);
-            console.log('User created successfully:', response);
-            setSuccessMessage('Usuário criado com sucesso!'); // Set success message
-        } catch (err) {
-            setError(err instanceof Error ? err.message : String(err));
+            const response = await createCompany(token, event);
+            console.log('Company created successfully:', response);
+            setSuccessMessage('Empresa criada com sucesso!'); // Set success message
+        } catch (err: any) {
+            if (err.response) {
+                setError(err.response.data.error);
+              } else {
+                setError('Erro desconhecido. Tente novamente mais tarde.');
+              }
         } finally {
             setLoading(false);
         }
     };
-
-    const fetchCompanies = async () => {
-        const token = localStorage.getItem('auth-token');
-
-        if (!token) {
-            setError('Não autorizado.');
-            setLoadingCompanies(false);
-            return;
-        }
-        try {
-            const response = await getCompanies(token);
-            console.log('Companies fetched successfully:', response.data);
-            setCompanies(response.data);
-        } catch (error) {
-            console.error('Error fetching companies:', error);
-            setError('Erro ao carregar empresas. Tente novamente.');
-        } finally {
-            setLoadingCompanies(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchCompanies();
-    }, []);
-
-    if (loadingCompanies) {
-        return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="100vh"
-            >
-                <CircularProgress />
-            </Box>
-        )
-    }
 
     return (
         <CssVarsProvider>
@@ -147,47 +117,35 @@ const CreateUser = () => {
                                 </Alert>
                             )}
                             <form
-                                onSubmit={async (event: React.FormEvent<CreateUserFormElement>) => {
+                                onSubmit={async (event: React.FormEvent<CompanyFormElement>) => {
                                     event.preventDefault();
-                                    const form = event.currentTarget as CreateUserFormElement;
+                                    const form = event.currentTarget as CompanyFormElement;
                                     const formElements = event.currentTarget.elements;
-                                    console.log(event.currentTarget.elements);
-                                    const userData: NewUser = {
+                                    const companyData: NewCompany = {
                                         name: formElements.name.value,
-                                        email: formElements.email.value,
-                                        password: formElements.password.value,
-                                        company: selectedCompany || "",
+                                        cnpj: formElements.cnpj.value,
+                                        code: formElements.code.value,
+                                        active: true,
                                     };
-                                    await handleSubmit(userData);
+                                    await handleSubmit(companyData);
                                     form.reset(); // Reset the form after submission
                                 }}
                             >
                                 <FormControl required>
-                                    <FormLabel>Nome</FormLabel>
+                                    <FormLabel>Nome da empresa</FormLabel>
                                     <Input type="text" name="name" />
                                 </FormControl>
                                 <FormControl required>
-                                    <FormLabel>Email</FormLabel>
-                                    <Input type="email" name="email" />
+                                    <FormLabel>CNPJ</FormLabel>
+                                    <Input type="text" name="cnpj" />
                                 </FormControl>
                                 <FormControl required>
-                                    <FormLabel>Empresa</FormLabel>
-                                    <Select name="company" defaultValue={selectedCompany}>
-                                        <Option value="" disabled>Selecione uma empresa</Option>
-                                        {companies.map((company) => (
-                                            <Option key={company._id} value={company._id} onClick={() => setSelectedCompany(company._id)}>
-                                                {company.name}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                                <FormControl required>
-                                    <FormLabel>Senha</FormLabel>
-                                    <Input type="password" name="password" />
+                                    <FormLabel>Código da empresa</FormLabel>
+                                    <Input type="text" name="code" />
                                 </FormControl>
                                 <Stack sx={{ gap: 4, mt: 2 }}>
                                     <Button type="submit" fullWidth loading={loading}>
-                                        Cadastrar usuário
+                                        Cadastrar empresa
                                     </Button>
                                 </Stack>
                             </form>
@@ -196,7 +154,8 @@ const CreateUser = () => {
                 </Box>
             </Box>
         </CssVarsProvider>
-    );
-};
+);
 
-export default CreateUser;
+}
+
+export default CreateCompany;

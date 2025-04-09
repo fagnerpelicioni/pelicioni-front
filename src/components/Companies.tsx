@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { getUsers } from '../api/users';
+import { useEffect, useState } from 'react';
+import { getCompanies } from '../api/company';
 import { UserLink } from '../Interfaces'; // Adjust the import path as necessary
 
 import {
@@ -7,37 +7,44 @@ import {
   Typography,
   Sheet,
   Button,
-  Avatar,
-  IconButton,
   Stack,
   CircularProgress,
+  Switch,
 } from '@mui/joy';
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+
+import { Company } from '../Interfaces';
 
 const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [usersData, setUserData] = useState<{ _id: string; name: string; email: string; company: { name: string } }[] | null>(null);
+  const [companiesData, setCompaniesData] = useState<Company[]>([]);
 
-  const getUsersData = async (token: string) => {
-    await getUsers(token)
+  const getCompaniesData = async (token: string) => {
+    await getCompanies(token)
       .then((response) => {
-        setUserData(response.data);
+        setCompaniesData(response.data);
         setLoading(false);
       })
-      .catch((error) => {
-        setError('Error fetching user data.');
+      .catch((err: any) => {
+        if (err.response) {
+            setError(err.response.data.error);
+          } else {
+            setError('Erro desconhecido. Tente novamente mais tarde.');
+          }
+      })
+      .finally(() => {
         setLoading(false);
-      }
-      );
+      });
   };
 
   useEffect(() => {
     const token = localStorage.getItem('auth-token');
-    if (token) {
-      getUsersData(token);
+    if (!token) {
+        setError('Não autorizado.');
+        setLoading(false);
+        return;
     }
+    getCompaniesData(token);
     }, []);
 
     if (loading) {
@@ -81,7 +88,7 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
     <Box sx={{ p: 3 }}>
       {/* Page Title */}
       <Typography level="h4" sx={{ mb: 2 }}>
-        Gerenciamento de usuários
+        Users Management
       </Typography>
 
       {/* Users List Container */}
@@ -106,46 +113,30 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
         >
           <Typography>ID</Typography>
           <Typography>Nome</Typography>
-          <Typography>Email</Typography>
-          <Typography>Empresa</Typography>
-          <Typography>Acoes</Typography>
+          <Typography>Código</Typography>
+          <Typography>Ativo</Typography>
         </Box>
 
         {/* User Items */}
-        {usersData ? usersData.map((user, index) => (
+        {companiesData ? companiesData.map((company, index) => (
           <Box
             key={index}
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
               alignItems: 'center',
               py: 1,
               borderBottom: '1px solid',
               borderColor: 'divider',
             }}
           >
-            <Typography>{user._id}</Typography>
-            <Typography>{user.name}</Typography>
-            <Typography>{user.email}</Typography>
-            <Typography>{"-"}</Typography>
-            <Stack direction="row" spacing={1}>
-              <IconButton
-                variant="soft"
-                color="primary"
-                onClick={() => handleEdit(user._id)}
-              >
-                <EditRoundedIcon />
-              </IconButton>
-              <IconButton
-                variant="soft"
-                color="danger"
-                onClick={() => handleDelete(user._id)}
-              >
-                <DeleteRoundedIcon />
-              </IconButton>
+            <Typography sx={{ width: "30%"}}>{company._id}</Typography>
+            <Typography sx={{ width: "30%"}}>{company.name}</Typography>
+            <Typography sx={{ width: "20%"}}>{company.code}</Typography>
+            <Stack sx={{ flex: 1}}>
+                <Switch variant="outlined" checked={company.active} />
             </Stack>
           </Box>
-        )): ( <Typography>Sem usuários cadastrados</Typography>)} 
+        )): ( <Typography>Sem empresas cadastradas</Typography>)} 
 
         <Button
           variant="solid"
@@ -153,7 +144,7 @@ const Users = ({onItemClick}: { onItemClick: (item: UserLink) => void}) => {
           sx={{ mt: 2 }}
           onClick={() => onItemClick({ name: "Users", link: '/' })}
         >
-          Criar novo usuário
+          Criar nova empresa
         </Button>
       </Sheet>
     </Box>
