@@ -50,7 +50,6 @@ const CreateUser = () => {
         }
         try {
             const response = await getCompanies(token);
-            console.log('Companies fetched successfully:', response.data);
             setCompanies(response.data);
         } catch (error) {
             console.error('Error fetching companies:', error);
@@ -151,7 +150,6 @@ const CreateUser = () => {
                                     event.preventDefault();
                                     const form = event.currentTarget as CreateUserFormElement;
                                     const formElements = event.currentTarget.elements;
-                                    console.log(event.currentTarget.elements);
                                     const userData: NewUser = {
                                         name: formElements.name.value,
                                         email: formElements.email.value,

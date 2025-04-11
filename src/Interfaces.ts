@@ -51,6 +51,7 @@ export interface FormLinkElements extends HTMLFormControlsCollection {
     name: HTMLInputElement;
     userEmail: HTMLInputElement;
     link: HTMLInputElement;
+    category: HTMLSelectElement;
 }
 export interface LinkFormElement extends HTMLFormElement {
 readonly elements: FormLinkElements;

@@ -16,6 +16,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import ExpandIcon from '@mui/icons-material/Expand';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Business } from '@mui/icons-material';
 
@@ -24,6 +25,12 @@ import logo from '../assets/logo_new.png';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../utils';
 import { UserLink, UserData } from '../Interfaces'; // Adjust the import path as necessary
+import { categories } from '../utils/constants';
+
+interface Category {
+  category: string;
+  links: UserLink[];
+}
 
 const Toggler = ({
   defaultExpanded = false,
@@ -64,6 +71,26 @@ const Sidebar = ({ userData, onItemClick }: { userData: UserData; onItemClick: (
     localStorage.removeItem('auth-token');
     window.location.href = '/login'; // Redirect to login page
   }
+
+  const userLinks = (): { category: string; links: UserLink[] }[] => {
+    if (!userData.links) return [];
+  
+    const grouped = userData.links.reduce((acc: any, link: UserLink) => {
+      const category = link.category && link.category.trim() ? link.category : 'uncategorized';
+  
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+  
+      acc[category].push(link);
+      return acc;
+    }, {});
+  
+    return Object.entries(grouped).map(([category, links]) => ({
+      category,
+      links,
+    } as Category));
+  };
 
   return (
     <Sheet
@@ -150,16 +177,63 @@ const Sidebar = ({ userData, onItemClick }: { userData: UserData; onItemClick: (
             </ListItemButton>
           </ListItem>
 
-          {(userData.links ?? []).map((link: UserLink, index: number) => (
-            <ListItem key={index}>
-              <ListItemButton onClick={() => onItemClick(link)}>
-                <DashboardRoundedIcon />
-                <ListItemContent>
-                  <Typography level="title-sm">{link.name}</Typography>
-                </ListItemContent>
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {userLinks()
+            .filter((cat: Category) => cat.category !== "uncategorized") // Exclude "uncategorized" categories
+            .map((cat: Category, index: number) => (
+              <ListItem nested key={index}>
+                <Toggler
+                  renderToggle={({ open, setOpen }) => (
+                    <ListItemButton onClick={() => setOpen(!open)}>
+                      <ExpandIcon />
+                      <ListItemContent>
+                        <Typography level="title-sm">{categories[cat.category]}</Typography>
+                      </ListItemContent>
+                      <KeyboardArrowDownIcon
+                        sx={[
+                          open
+                            ? {
+                                transform: "rotate(180deg)",
+                              }
+                            : {
+                                transform: "none",
+                              },
+                        ]}
+                      />
+                    </ListItemButton>
+                  )}
+                >
+                  <List sx={{ gap: 0.5 }}>
+                    {cat.links.map((link: UserLink, index: number) => (
+                      <ListItem key={index} sx={{ mt: 0.5 }}>
+                        <ListItemButton onClick={() => onItemClick(link)}>
+                          <DashboardRoundedIcon />
+                          <ListItemContent>
+                            <Typography level="title-sm">{link.name}</Typography>
+                          </ListItemContent>
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Toggler>
+              </ListItem>
+            ))}
+
+          {userLinks()
+            .filter((cat: any) => cat.category === "uncategorized")
+            .map((cat: any, index: number) => (
+              <React.Fragment key={index}>
+                {cat.links.map((link: UserLink, linkIndex: number) => (
+                <ListItem key={linkIndex}>
+                  <ListItemButton onClick={() => onItemClick(link)}>
+                    <DashboardRoundedIcon />
+                    <ListItemContent>
+                      <Typography level="title-sm">{link.name}</Typography>
+                    </ListItemContent>
+                  </ListItemButton>
+                </ListItem>
+                ))}
+              </React.Fragment>
+            ))}
         </List>
         <List
           size="sm"

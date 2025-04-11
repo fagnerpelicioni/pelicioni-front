@@ -28,7 +28,6 @@ const HomePage = () => {
         if (token) {
             getLinks(token)
                 .then(response => {
-                    console.log(response.data);
                     setUserData(response.data);
                     setLoading(false);
                 })

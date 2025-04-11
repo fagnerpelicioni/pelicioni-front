@@ -2,22 +2,16 @@ import { useState } from "react";
 import { createLink } from "../api/links";
 
 import { CssVarsProvider } from '@mui/joy/styles';
-import GlobalStyles from '@mui/joy/GlobalStyles';
-import CssBaseline from '@mui/joy/CssBaseline';
-import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import FormControl from '@mui/joy/FormControl';
-import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
-import Stack from '@mui/joy/Stack';
-import { Alert } from "@mui/joy";
+import { Alert, Select, Option, GlobalStyles, CssBaseline, Box, Button, FormControl, FormLabel, Input, Stack } from "@mui/joy";
 
 import { UserLink, LinkFormElement } from '../Interfaces';
+import { categoriesList } from "../utils/constants";
 
 const CreateUser = () => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState<string | null>(null); // New state for success message
+    const [category, setCategory] = useState<string>(""); // Add state for the selected category
 
     const handleSubmit = async (event: UserLink) => {
         setLoading(true);
@@ -117,6 +111,7 @@ const CreateUser = () => {
                                         name: formElements.name.value,
                                         userEmail: formElements.userEmail.value,
                                         link: formElements.link.value,
+                                        category: category,
                                     };
                                     await handleSubmit(userData);
                                     form.reset(); // Reset the form after submission
@@ -133,6 +128,17 @@ const CreateUser = () => {
                                 <FormControl required>
                                     <FormLabel>Link</FormLabel>
                                     <Input type="text" name="link" />
+                                </FormControl>
+                                <FormControl required>
+                                <FormLabel>Categoria</FormLabel>
+                                    <Select name="category" defaultValue={category}>
+                                        <Option value="" disabled>Selecione uma categoria</Option>
+                                        {categoriesList.map((cat: any) => (
+                                            <Option key={cat.id} value={cat.id} onClick={() => setCategory(cat.id)}>
+                                                {cat.name}
+                                            </Option>
+                                        ))}
+                                    </Select>
                                 </FormControl>
                                 <Stack sx={{ gap: 4, mt: 2 }}>
                                     <Button type="submit" fullWidth loading={loading}>
